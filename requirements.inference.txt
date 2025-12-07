@@ -1,0 +1,38 @@
+# --- Core API ---
+fastapi
+uvicorn
+python-multipart
+prometheus_client
+
+# --- YOLO runtime utilities ---
+numpy==1.26.4
+pillow
+tqdm
+PyYAML
+requests
+psutil
+py-cpuinfo
+
+# --- Optional but lightweight ---
+pandas
+scipy
+
+# ---------------------
+# Monitoring / Drift
+# ---------------------
+evidently==0.7.17
+sniffio
+
+# ---------------------
+# MLflow (FULL for registry)
+# ---------------------
+mlflow==3.7.0
+SQLAlchemy==2.0.44
+alembic==1.17.2
+
+# --- Visualization & image utils ---
+matplotlib
+opencv-python-headless==4.8.1.78
+
+# --- PyTorch CPU wheels ---
+--extra-index-url https://download.pytorch.org/whl/cpu

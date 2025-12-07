@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: detection-service
+  labels:
+    app: detection-api
+spec:
+  selector:
+    app: detection-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+      protocol: TCP
+  type: NodePort  # use ClusterIP if you only want internal access

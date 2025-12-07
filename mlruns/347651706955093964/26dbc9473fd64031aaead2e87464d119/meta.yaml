@@ -1,0 +1,14 @@
+artifact_uri: file:///workspaces/robotics-distilled-objectdetection/mlruns/347651706955093964/26dbc9473fd64031aaead2e87464d119/artifacts
+end_time: 1765121925749
+entry_point_name: ''
+experiment_id: '347651706955093964'
+lifecycle_stage: active
+run_id: 26dbc9473fd64031aaead2e87464d119
+run_name: silent-grub-584
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1765121925278
+status: 3
+tags: []
+user_id: codespace

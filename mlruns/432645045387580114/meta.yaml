@@ -1,0 +1,6 @@
+artifact_location: file:///workspaces/robotics-distilled-objectdetection/mlruns/432645045387580114
+creation_time: 1765013349443
+experiment_id: '432645045387580114'
+last_update_time: 1765013349443
+lifecycle_stage: active
+name: runs/teacher

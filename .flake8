@@ -1,0 +1,19 @@
+[flake8]
+max-line-length = 120
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    env,
+    runs,
+    mlruns,
+    datasets,
+    models,
+    data,
+    figures,
+    notebooks,
+    k8s,
+    *.pt,
+    *.yaml,
+    *.yml

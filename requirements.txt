@@ -1,0 +1,43 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# ---------------------
+# Core ML & Vision stack
+# ---------------------
+numpy==1.26.4
+opencv-python-headless==4.8.1.78
+
+# PyTorch CPU ONLY
+torch==2.2.0+cpu
+torchvision==0.17.0+cpu
+
+# YOLO without forcing heavy deps
+ultralytics==8.0.196
+
+# ---------------------
+# FastAPI inference API
+# ---------------------
+fastapi
+uvicorn
+python-multipart
+prometheus_client
+
+# ---------------------
+# MLflow (FULL for registry)
+# ---------------------
+mlflow==3.7.0
+SQLAlchemy==2.0.44
+alembic==1.17.2
+
+# ---------------------
+# Monitoring / Drift
+# ---------------------
+evidently==0.7.17
+
+# ---------------------
+# Dev tools
+# ---------------------
+pre-commit
+isort
+pytest
+black
+flake8

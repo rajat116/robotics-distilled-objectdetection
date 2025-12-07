@@ -1,0 +1,14 @@
+artifact_uri: file:///workspaces/robotics-distilled-objectdetection/mlruns/432645045387580114/b6bf118c57ff45b19de93f8878dd38e9/artifacts
+end_time: 1765015135865
+entry_point_name: ''
+experiment_id: '432645045387580114'
+lifecycle_stage: active
+run_id: b6bf118c57ff45b19de93f8878dd38e9
+run_name: colorful-turtle-646
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1765015135839
+status: 3
+tags: []
+user_id: codespace

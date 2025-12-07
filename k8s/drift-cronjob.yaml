@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: detection-drift-job
+spec:
+  # Every 30 minutes
+  schedule: "*/30 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: detection-drift
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: drift-job
+              image: yolo-kd-api:latest  # reuse same image, includes your code
+              imagePullPolicy: IfNotPresent
+              command: ["python", "-m", "src.monitoring.drift_job"]
+              env:
+                - name: DRIFT_REPORT_DIR
+                  value: "/app/reports"

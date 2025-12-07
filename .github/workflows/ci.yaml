@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint
+        run: |
+          black --check .
+          flake8 .
+
+      - name: Run tests
+        run: |
+          pytest -q
+
+      # ENABLE DOCKER
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # LOGIN TO DOCKER (local builder, no registry needed)
+      - name: Prepare Docker
+        run: |
+          docker info
+
+      - name: Build inference Docker image
+        run: |
+          docker build -t yolo-kd-api -f Dockerfile.inference .

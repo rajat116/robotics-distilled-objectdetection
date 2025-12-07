@@ -1,0 +1,14 @@
+artifact_uri: file:///workspaces/robotics-distilled-objectdetection/mlruns/284064585634100670/9d6c99440802431f8c036ddb0063cdd7/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '284064585634100670'
+lifecycle_stage: active
+run_id: 9d6c99440802431f8c036ddb0063cdd7
+run_name: teacher_yolov8m_voc
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1765012952897
+status: 1
+tags: []
+user_id: codespace

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: detection-api
+  labels:
+    app: detection-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: detection-api
+  template:
+    metadata:
+      labels:
+        app: detection-api
+    spec:
+      containers:
+        - name: detection-api
+          image: yolo-kd-api:latest  # replace with registry image later
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"

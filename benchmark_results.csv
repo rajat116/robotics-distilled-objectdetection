@@ -1,0 +1,4 @@
+model,weights,model_size_mb,avg_latency_ms,p95_latency_ms
+teacher,runs/teacher/yolov8s_coco128/weights/best.pt,21.48673439025879,82.04269409179688,89.16822671890257
+student,runs/student/yolov8n_coco128_student/weights/best.pt,6.193033218383789,37.66131401062012,47.074079513549805
+student_kd,runs/student/yolov8n_coco128_student_KD/weights/best.pt,6.193033218383789,32.25255012512207,34.08235311508179
