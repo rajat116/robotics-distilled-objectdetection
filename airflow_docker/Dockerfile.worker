@@ -1,0 +1,15 @@
+FROM apache/airflow:3.1.3
+
+# Install ONLY light-weight packages needed by Airflow
+# DO NOT install ultralytics or torch here.
+USER airflow
+
+RUN pip install --user --no-cache-dir \
+    mlflow==2.13.0 \
+    boto3==1.34.0
+
+# Add project path
+ENV PYTHONPATH="/opt/project:${PYTHONPATH}"
+
+# Ensure runtime user is airflow
+USER airflow

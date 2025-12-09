@@ -1,6 +1,6 @@
 import os
-
 import mlflow
+from mlflow.tracking import MlflowClient
 from ultralytics import YOLO
 
 from src.utils.config import MLFLOW_EXPERIMENT_NAME
@@ -12,31 +12,31 @@ logger = get_logger("train_student")
 # CONFIG
 # -------------------------
 STUDENT_MODEL_NAME = "yolov8n.pt"  # small student model
-DATA_CONFIG = "coco128.yaml"  # same small dataset as teacher
+DATA_CONFIG = "coco128.yaml"
 EPOCHS = 5
 IMGSZ = 320
 BATCH = 8
 
-# Disable Ultralytics' built-in MLflow; we use our own
+# MLflow settings
 os.environ["YOLO_MLFLOW"] = "False"
-os.environ["MLFLOW_TRACKING_URI"] = "file:./mlruns"
+os.environ.setdefault("MLFLOW_TRACKING_URI", "file:./mlruns")
+
+REGISTERED_MODEL_NAME = "yolo-student"  # <-- REGISTRY NAME
 
 
 def train_student():
-    """
-    Train a small YOLOv8n student model on coco128 and log everything to MLflow.
-    This is a clean, minimal baseline (no custom KD internals).
-    """
-
     print(">>> Initializing student model:", STUDENT_MODEL_NAME)
     model = YOLO(STUDENT_MODEL_NAME)
 
-    logger.info("Starting STUDENT training on COCO128 (yolov8n fine-tune)")
+    logger.info("Starting STUDENT training on COCO128")
 
-    # Set MLflow experiment (same as teacher, so runs are grouped)
+    # --- ensure tracking URI and experiment ---
+    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "file:./mlruns"))
     mlflow.set_experiment(MLFLOW_EXPERIMENT_NAME)
 
-    with mlflow.start_run(run_name="student_yolov8n_coco128"):
+    with mlflow.start_run(run_name="student_yolov8n_coco128") as run:
+
+        run_id = run.info.run_id
 
         # -----------------------------
         # LOG HYPERPARAMETERS
@@ -64,32 +64,60 @@ def train_student():
         # -----------------------------
         # METRIC LOGGING (same pattern as teacher)
         # -----------------------------
-        try:
-            metrics = results.results_dict  # this is a dict in your version
-            for key, value in metrics.items():
-                safe_key = (
-                    key.replace("/", "_")
-                    .replace("(", "")
-                    .replace(")", "")
-                    .replace("-", "_")
-                )
-                try:
-                    mlflow.log_metric(safe_key, float(value))
-                except Exception:
-                    logger.warning(f"MLflow could not log {safe_key}={value}")
-        except Exception as e:
-            logger.warning(f"Could not access results_dict from Ultralytics: {e}")
+        metrics = results.results_dict
+        for key, value in metrics.items():
+            safe_key = (
+                key.replace("/", "_")
+                .replace("(", "")
+                .replace(")", "")
+                .replace("-", "_")
+            )
+            try:
+                mlflow.log_metric(safe_key, float(value))
+            except Exception:
+                logger.warning(f"MLflow could not log {safe_key}={value}")
 
         # -----------------------------
         # SAVE BEST CHECKPOINT
         # -----------------------------
         best_ckpt = "runs/student/yolov8n_coco128_student/weights/best.pt"
         if os.path.exists(best_ckpt):
-            mlflow.log_artifact(best_ckpt)
+            mlflow.log_artifact(best_ckpt, artifact_path="model")  # <--- REQUIRED
             logger.info(f"Logged student best checkpoint: {best_ckpt}")
         else:
             logger.warning("Student best.pt not found at expected location!")
 
+        # -----------------------------
+        # REGISTER MODEL IN MLflow REGISTRY
+        # -----------------------------
+        client = MlflowClient()
+
+        # create registry entry if not exists
+        try:
+            client.create_registered_model(REGISTERED_MODEL_NAME)
+        except Exception:
+            pass  # already exists
+
+        # model source path inside MLflow run
+        source = f"runs:/{run_id}/artifacts/model"
+
+        mv = client.create_model_version(
+            name=REGISTERED_MODEL_NAME,
+            source=source,
+            run_id=run_id,
+        )
+
+        # set stage to STAGING
+        client.transition_model_version_stage(
+            name=REGISTERED_MODEL_NAME,
+            version=mv.version,
+            stage="Staging",
+            archive_existing_versions=False,
+        )
+
+        logger.info(
+            f"Registered student model: {REGISTERED_MODEL_NAME} v{mv.version} (Staging)"
+        )
         logger.info("Student training complete.")
 
 
