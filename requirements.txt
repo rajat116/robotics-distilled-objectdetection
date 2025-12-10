@@ -45,3 +45,8 @@ flake8
 #AWS tools
 boto3
 awscli
+
+typing_extensions>=4.15.0
+pydantic>=2.7.4
+pydantic_core>=2.18.4
+cryptography>=43,<47

@@ -77,6 +77,8 @@ x-airflow-common:
     # The following line can be used to set a custom config file, stored in the local config folder
     AIRFLOW_CONFIG: '/opt/airflow/config/airflow.cfg'
     PYTHONPATH: /opt/project
+    MLFLOW_TRACKING_URI: "http://52.0.54.129:5000"
+    MLFLOW_REGISTRY_URI: "http://52.0.54.129:5000"
   volumes:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
     - /tmp/airflow_logs:/opt/airflow/logs
