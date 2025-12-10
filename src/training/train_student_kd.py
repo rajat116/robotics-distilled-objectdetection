@@ -1,4 +1,5 @@
 import os
+import socket
 import mlflow
 from mlflow.tracking import MlflowClient
 from ultralytics import YOLO
@@ -8,18 +9,33 @@ from src.utils.logger import get_logger
 
 logger = get_logger("train_student_kd")
 
+# -------------------------
+# Detect EC2 environment
+# -------------------------
+def is_ec2():
+    if os.path.exists("/sys/hypervisor/uuid"):
+        return True
+    return socket.gethostname().startswith("ip-")
+
+
+# -------------------------
+# Dataset + MLflow Selection
+# -------------------------
+if is_ec2():
+    DATA_CONFIG = "data/coco128_ec2.yaml"
+    MLFLOW_URI = "http://127.0.0.1:5000"
+else:
+    DATA_CONFIG = "data/coco128_local.yaml"
+    MLFLOW_URI = os.getenv("MLFLOW_TRACKING_URI", "http://52.0.54.129:5000")
+
+os.environ["YOLO_MLFLOW"] = "False"
+os.environ["MLFLOW_TRACKING_URI"] = MLFLOW_URI
+
 # Config
 STUDENT_MODEL_NAME = "yolov8n.pt"
-DATA_CONFIG = "coco128.yaml"
 EPOCHS = 5
 IMGSZ = 320
 BATCH = 8
-
-# Disable Ultralytics built-in MLflow
-os.environ["YOLO_MLFLOW"] = "False"
-os.environ["MLFLOW_TRACKING_URI"] = os.getenv(
-    "MLFLOW_TRACKING_URI", "http://98.88.77.30:5000"
-)
 
 # MLflow registry model name
 REGISTERED_MODEL_NAME = "yolo-student-kd"
@@ -34,7 +50,7 @@ def train_student_kd():
     logger.info("Starting STUDENT KD training on COCO128 (teacher pseudo-labels)")
 
     # Ensure MLflow tracking URI + experiment
-    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "file:./mlruns"))
+    mlflow.set_tracking_uri(MLFLOW_URI)    
     mlflow.set_experiment(MLFLOW_EXPERIMENT_NAME)
 
     with mlflow.start_run(run_name="student_yolov8n_coco128_KD") as run:

@@ -1,4 +1,5 @@
 import os
+import socket
 import mlflow
 from mlflow.tracking import MlflowClient
 from ultralytics import YOLO
@@ -6,13 +7,14 @@ from ultralytics import YOLO
 from src.utils.config import MLFLOW_EXPERIMENT_NAME
 from src.utils.logger import get_logger
 
-# Disable Ultralytics' own MLflow
-os.environ["YOLO_MLFLOW"] = "False"
-os.environ["MLFLOW_TRACKING_URI"] = os.getenv(
-    "MLFLOW_TRACKING_URI", "http://98.88.77.30:5000"
-)
-
 logger = get_logger("train_teacher")
+
+def is_ec2():
+    # EC2 always has this file
+    if os.path.exists("/sys/hypervisor/uuid"):
+        return True
+    # EC2 hostnames start with "ip-"
+    return socket.gethostname().startswith("ip-")
 
 # Name for the MLflow Model Registry entry
 REGISTERED_MODEL_NAME = "yolo-teacher"
@@ -20,18 +22,28 @@ REGISTERED_MODEL_NAME = "yolo-teacher"
 
 def train_teacher():
 
+    # ----------------------
+    # Dataset config selector
+    # ----------------------
+    if is_ec2():
+        data_config = "data/coco128_ec2.yaml"
+        mlflow_uri = "http://127.0.0.1:5000"
+    else:
+        data_config = "data/coco128_local.yaml"
+        mlflow_uri = os.getenv("MLFLOW_TRACKING_URI", "http://52.0.54.129:5000")
+
+    os.environ["YOLO_MLFLOW"] = "False"
+    os.environ["MLFLOW_TRACKING_URI"] = mlflow_uri
+    mlflow.set_tracking_uri(mlflow_uri)
+    mlflow.set_experiment(MLFLOW_EXPERIMENT_NAME)
+
     model = YOLO("yolov8s.pt")
-    data_config = "coco128.yaml"
 
     epochs = 5
     imgsz = 320
     batch = 8
 
-    logger.info("Starting teacher training on COCO128 (small model)")
-
-    # --- Ensure tracking URI + experiment are set ---
-    mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "file:./mlruns"))
-    mlflow.set_experiment(MLFLOW_EXPERIMENT_NAME)
+    logger.info(f"Training started using dataset {data_config}")
 
     # Capture run handle so we can use run_id later
     with mlflow.start_run(run_name="teacher_yolov8s_coco128") as run:
