@@ -17,7 +17,9 @@ BATCH = 8
 
 # Disable Ultralytics built-in MLflow
 os.environ["YOLO_MLFLOW"] = "False"
-os.environ.setdefault("MLFLOW_TRACKING_URI", "file:./mlruns")
+os.environ["MLFLOW_TRACKING_URI"] = os.getenv(
+    "MLFLOW_TRACKING_URI", "http://98.88.77.30:5000"
+)
 
 # MLflow registry model name
 REGISTERED_MODEL_NAME = "yolo-student-kd"

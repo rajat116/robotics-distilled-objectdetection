@@ -20,10 +20,13 @@ from airflow.operators.python import PythonOperator, BranchPythonOperator
 from airflow.operators.empty import EmptyOperator
 
 # -------------------------------------------------------------------------
-# ENVIRONMENT CONFIG FOR MLflow INSIDE DOCKER
+# MLflow config — read from environment (set in docker-compose via .env)
 # -------------------------------------------------------------------------
-os.environ["MLFLOW_TRACKING_URI"] = "http://host.docker.internal:5000"
-os.environ["MLFLOW_REGISTRY_URI"] = "http://host.docker.internal:5000"
+MLFLOW_TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI")
+MLFLOW_REGISTRY_URI = os.getenv("MLFLOW_REGISTRY_URI")
+
+os.environ["MLFLOW_TRACKING_URI"] = MLFLOW_TRACKING_URI
+os.environ["MLFLOW_REGISTRY_URI"] = MLFLOW_REGISTRY_URI
 
 # -------------------------------------------------------------------------
 # Helper Functions
@@ -41,19 +44,67 @@ def check_new_data(**context):
 def train_teacher_fn():
     import subprocess
 
-    subprocess.run(["python", "-m", "src.training.train_teacher"], check=True)
+    cmd = (
+        "cd robotics-distilled-objectdetection && "
+        "source .venv/bin/activate && "
+        "python -m src.training.train_teacher"
+    )
+    subprocess.run(
+        [
+            "ssh",
+            "-o",
+            "StrictHostKeyChecking=no",
+            "-i",
+            "/opt/airflow/keys/yolo-robotics.pem",
+            "ubuntu@98.88.77.30",
+            cmd,
+        ],
+        check=True,
+    )
 
 
 def train_student_fn():
     import subprocess
 
-    subprocess.run(["python", "-m", "src.training.train_student"], check=True)
+    cmd = (
+        "cd robotics-distilled-objectdetection && "
+        "source .venv/bin/activate && "
+        "python -m src.training.train_student"
+    )
+    subprocess.run(
+        [
+            "ssh",
+            "-o",
+            "StrictHostKeyChecking=no",
+            "-i",
+            "/opt/airflow/keys/yolo-robotics.pem",
+            "ubuntu@98.88.77.30",
+            cmd,
+        ],
+        check=True,
+    )
 
 
 def train_student_kd_fn():
     import subprocess
 
-    subprocess.run(["python", "-m", "src.training.train_student_kd"], check=True)
+    cmd = (
+        "cd robotics-distilled-objectdetection && "
+        "source .venv/bin/activate && "
+        "python -m src.training.train_student_kd"
+    )
+    subprocess.run(
+        [
+            "ssh",
+            "-o",
+            "StrictHostKeyChecking=no",
+            "-i",
+            "/opt/airflow/keys/yolo-robotics.pem",
+            "ubuntu@98.88.77.30",
+            cmd,
+        ],
+        check=True,
+    )
 
 
 def evaluate_and_promote_fn():

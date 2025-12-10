@@ -41,3 +41,7 @@ isort
 pytest
 black
 flake8
+
+#AWS tools
+boto3
+awscli

@@ -8,7 +8,9 @@ from src.utils.logger import get_logger
 
 # Disable Ultralytics' own MLflow
 os.environ["YOLO_MLFLOW"] = "False"
-os.environ.setdefault("MLFLOW_TRACKING_URI", "file:./mlruns")
+os.environ["MLFLOW_TRACKING_URI"] = os.getenv(
+    "MLFLOW_TRACKING_URI", "http://98.88.77.30:5000"
+)
 
 logger = get_logger("train_teacher")
 
