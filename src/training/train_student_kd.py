@@ -9,6 +9,7 @@ from src.utils.logger import get_logger
 
 logger = get_logger("train_student_kd")
 
+
 # -------------------------
 # Detect EC2 environment
 # -------------------------
@@ -23,7 +24,7 @@ def is_ec2():
 # -------------------------
 if is_ec2():
     DATA_CONFIG = "data/coco128_ec2.yaml"
-    MLFLOW_URI = "http://127.0.0.1:5000"
+    MLFLOW_URI = "http://52.0.54.129:5000"
 else:
     DATA_CONFIG = "data/coco128_local.yaml"
     MLFLOW_URI = os.getenv("MLFLOW_TRACKING_URI", "http://52.0.54.129:5000")
@@ -50,7 +51,7 @@ def train_student_kd():
     logger.info("Starting STUDENT KD training on COCO128 (teacher pseudo-labels)")
 
     # Ensure MLflow tracking URI + experiment
-    mlflow.set_tracking_uri(MLFLOW_URI)    
+    mlflow.set_tracking_uri(MLFLOW_URI)
     mlflow.set_experiment(MLFLOW_EXPERIMENT_NAME)
 
     with mlflow.start_run(run_name="student_yolov8n_coco128_KD") as run:

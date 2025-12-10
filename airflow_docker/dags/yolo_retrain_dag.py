@@ -114,36 +114,48 @@ def evaluate_and_promote_fn():
     """
     from mlflow.tracking import MlflowClient
 
-    client = MlflowClient()
-
+    client = MlflowClient(tracking_uri="http://52.0.54.129:5000")
     model_name = "yolo-student-kd"
+    metric_key = "metrics/mAP50-95B"  # <-- correct metric
 
-    # Get staging version
-    staging = client.get_latest_versions(model_name, stages=["Staging"])[0]
-    prod = None
-    try:
-        prod = client.get_latest_versions(model_name, stages=["Production"])[0]
-    except Exception:
-        pass  # No production model yet
+    # ---- Get staging model ----
+    staging_list = client.get_latest_versions(model_name, ["Staging"])
+    if not staging_list:
+        raise Exception("❌ No staging model found!")
+    staging = staging_list[0]
 
-    # For now compare F1 score (stored in MLflow metrics)
-    staging_f1 = client.get_metric_history(staging.run_id, "F1")[-1].value
+    # ---- Extract staging metric ----
+    staging_hist = client.get_metric_history(staging.run_id, metric_key)
+    if len(staging_hist) == 0:
+        raise Exception(f"❌ Staging run has no metric {metric_key}")
+    staging_score = staging_hist[-1].value
 
-    if prod:
-        prod_f1 = client.get_metric_history(prod.run_id, "F1")[-1].value
+    # ---- Get production model (if exists) ----
+    prod_list = client.get_latest_versions(model_name, ["Production"])
+    if len(prod_list) == 0:
+        print("⚠️ No production model yet → auto-promoting first model")
+        prod_score = -1
+        prod = None
     else:
-        prod_f1 = -1  # force promote first model
+        prod = prod_list[0]
+        prod_hist = client.get_metric_history(prod.run_id, metric_key)
+        prod_score = prod_hist[-1].value if len(prod_hist) else -1
 
-    if staging_f1 > prod_f1:
+    # ---- Compare scores ----
+    print(f"Staging {metric_key} = {staging_score}")
+    print(f"Production {metric_key} = {prod_score}")
+
+    # ---- Promote if improved ----
+    if staging_score > prod_score:
         client.transition_model_version_stage(
             name=model_name,
             version=staging.version,
             stage="Production",
             archive_existing_versions=True,
         )
-        print("🚀 Model promoted to Production")
+        print(f"🚀 PROMOTED yolo-student-kd v{staging.version}")
     else:
-        print("⚠️ Staging model NOT better than Production")
+        print("⚠️ No promotion — staging is not better than production")
 
 
 def notify_success():

@@ -9,12 +9,14 @@ from src.utils.logger import get_logger
 
 logger = get_logger("train_teacher")
 
+
 def is_ec2():
     # EC2 always has this file
     if os.path.exists("/sys/hypervisor/uuid"):
         return True
     # EC2 hostnames start with "ip-"
     return socket.gethostname().startswith("ip-")
+
 
 # Name for the MLflow Model Registry entry
 REGISTERED_MODEL_NAME = "yolo-teacher"
@@ -27,7 +29,7 @@ def train_teacher():
     # ----------------------
     if is_ec2():
         data_config = "data/coco128_ec2.yaml"
-        mlflow_uri = "http://127.0.0.1:5000"
+        mlflow_uri = "http://52.0.54.129:5000"
     else:
         data_config = "data/coco128_local.yaml"
         mlflow_uri = os.getenv("MLFLOW_TRACKING_URI", "http://52.0.54.129:5000")
