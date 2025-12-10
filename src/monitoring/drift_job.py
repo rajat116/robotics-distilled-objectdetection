@@ -1,61 +1,64 @@
 import os
+import json
 from datetime import datetime
-
 import numpy as np
-import pandas as pd
-from evidently.metric_preset import DataDriftPreset
-from evidently.report import Report
+import cv2
+
+# Path to dataset ON EC2
+DATA_FOLDER = (
+    "/home/ubuntu/robotics-distilled-objectdetection/datasets/coco128/images/train2017"
+)
 
 
-def make_dummy_reference(n: int = 500) -> pd.DataFrame:
-    """Synthetic 'reference' data – e.g. from training distribution."""
-    rng = np.random.default_rng(42)
-    return pd.DataFrame(
-        {
-            "mean_brightness": rng.normal(loc=100, scale=20, size=n),
-            "num_detections": rng.poisson(lam=2.0, size=n),
-            "avg_confidence": rng.normal(loc=0.7, scale=0.1, size=n),
-        }
+def run_drift_job():
+    """Compute simple drift metrics on EC2 dataset."""
+    if not os.path.exists(DATA_FOLDER):
+        raise Exception(f"❌ Dataset path not found on EC2: {DATA_FOLDER}")
+
+    pixels = []
+
+    for fname in os.listdir(DATA_FOLDER):
+        if not fname.endswith(".jpg"):
+            continue
+        img = cv2.imread(os.path.join(DATA_FOLDER, fname))
+        if img is None:
+            continue
+        pixels.append(img.mean())
+
+    if len(pixels) == 0:
+        raise Exception("❌ No valid images found for drift computation!")
+
+    current_mean = float(np.mean(pixels))
+
+    # Baseline stats (example)
+    baseline_mean = 110.0
+    baseline_std = 55.0
+
+    drift_score = abs(current_mean - baseline_mean) / baseline_std
+    drift_score = min(1.0, drift_score)
+
+    # Save to EC2 reports directory
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
+    out_dir = (
+        f"/home/ubuntu/robotics-distilled-objectdetection/reports/drift/{timestamp}"
     )
+    os.makedirs(out_dir, exist_ok=True)
 
+    summary = {
+        "drift_score": drift_score,
+        "current_mean": current_mean,
+        "baseline_mean": baseline_mean,
+        "timestamp": timestamp,
+    }
 
-def make_dummy_current(n: int = 500, drift: bool = True) -> pd.DataFrame:
-    """Synthetic 'current' data – slightly shifted if drift=True."""
-    rng = np.random.default_rng(123)
-    loc_brightness = 110 if drift else 100
-    loc_conf = 0.6 if drift else 0.7
-    return pd.DataFrame(
-        {
-            "mean_brightness": rng.normal(loc=loc_brightness, scale=20, size=n),
-            "num_detections": rng.poisson(lam=2.0, size=n),
-            "avg_confidence": rng.normal(loc=loc_conf, scale=0.1, size=n),
-        }
-    )
+    json_path = os.path.join(out_dir, "report.json")
+    with open(json_path, "w") as f:
+        json.dump(summary, f, indent=2)
 
+    print(f"📊 Drift score = {drift_score}")
+    print(f"JSON saved → {json_path}")
 
-def run_drift_job() -> str:
-    """Run a simple data drift report and save HTML.
-
-    Returns the path of the generated report.
-    """
-    # In a real setup you'd load:
-    # - reference stats from training
-    # - current stats from recent predictions
-    reference = make_dummy_reference()
-    current = make_dummy_current(drift=True)
-
-    report = Report(metrics=[DataDriftPreset()])
-    report.run(reference_data=reference, current_data=current)
-
-    report_dir = os.environ.get("DRIFT_REPORT_DIR", "reports")
-    os.makedirs(report_dir, exist_ok=True)
-
-    timestamp = datetime.utcnow().strftime("%Y%m%d-%H%M%S")
-    out_path = os.path.join(report_dir, f"drift_report_{timestamp}.html")
-    report.save_html(out_path)
-
-    print(f"[drift_job] Drift report written to: {out_path}")
-    return out_path
+    return drift_score
 
 
 if __name__ == "__main__":
