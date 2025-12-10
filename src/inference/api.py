@@ -35,6 +35,10 @@ async def predict(file: UploadFile = File(...)):
     num_primary = len(primary_preds[0].boxes)
 
     result = {
+        # OLD field names (required for CI tests)
+        "latency_ms": primary_latency * 1000,
+        "num_detections": num_primary,
+        # NEW field names (your updated API)
         "latency_primary_ms": primary_latency * 1000,
         "num_detections_primary": num_primary,
     }
