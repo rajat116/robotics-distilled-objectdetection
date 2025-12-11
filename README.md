@@ -59,7 +59,7 @@ We implement **label-based knowledge distillation (KD)**:
 
 Then we integrate this training process into a **complete MLOps system**:
 
-### ✔ Training on EC2 with MLflow logging
+### ✔ Training on AWS EC2 with MLflow logging
 
 ### ✔ Model Registry with versioning (Staging → Production)
 
@@ -173,25 +173,25 @@ python scripts/generate_inference_images.py
 
 ### **Input Image**
 
-```md
+```
 ![input](figures/input_image.jpg)
 ```
 
 ### **Teacher Detection**
 
-```md
+```
 ![teacher detection](figures/detection_teacher.jpg)
 ```
 
 ### **Student Detection**
 
-```md
+```
 ![student detection](figures/detection_student.jpg)
 ```
 
 ### **Distilled Student Detection**
 
-```md
+```
 ![student kd](figures/detection_student_kd.jpg)
 ```
 
@@ -206,10 +206,10 @@ Insert the table as:
 ```
 | metric                 | teacher | student | student_KD |
 |------------------------|---------|---------|------------|
-| mAP50                  | 0.640   | 0.520   | **0.760**  |
-| mAP50–95               | 0.488   | 0.387   | **0.619**  |
-| precision              | 0.653   | 0.592   | 0.643      |
-| recall                 | 0.605   | 0.503   | **0.712**  |
+| mAP50                  | 0.640   | 0.520   | ⭐ 0.760   |
+| mAP50–95               | 0.488   | 0.387   | ⭐ 0.619   |
+| precision              | 0.653   | 0.592   |    0.643   |
+| recall                 | 0.605   | 0.503   | ⭐ 0.712   |
 ```
 
 ### ✔ Interpretation
