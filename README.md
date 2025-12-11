@@ -173,7 +173,7 @@ python scripts/generate_inference_images.py
 
 ### **Input Image**
 
-![input](figures/input_image.jpg)
+<img src="figures/input_image.jpg" width="350" height="260"/>
 
 ### **Teacher Detection**
 
