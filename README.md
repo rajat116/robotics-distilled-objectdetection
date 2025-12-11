@@ -177,15 +177,15 @@ python scripts/generate_inference_images.py
 
 ### **Teacher Detection**
 
-![teacher detection](figures/detection_teacher.jpg)
+<img src="figures/detection_teacher.jpg" width="260" height="350"/>
 
 ### **Student Detection**
 
-![student detection](figures/detection_student.jpg)
+<img src="figures/detection_student.jpg" width="260" height="350"/>
 
 ### **Distilled Student Detection**
 
-![student kd](figures/detection_student_kd.jpg)
+<img src="figures/detection_student_kd.jpg" width="260" height="350"/>
 
 ---
 
@@ -195,14 +195,32 @@ python scripts/generate_inference_images.py
 
 Insert the table as:
 
-```
-| metric                 | teacher | student | student_KD |
-|------------------------|---------|---------|------------|
-| mAP50                  | 0.640   | 0.520   | ⭐ 0.760   |
-| mAP50–95               | 0.488   | 0.387   | ⭐ 0.619   |
-| precision              | 0.653   | 0.592   |    0.643   |
-| recall                 | 0.605   | 0.503   | ⭐ 0.712   |
-```
+<table>
+<tr>
+    <th>metric</th>
+    <th>teacher</th>
+    <th>student</th>
+    <th>student_KD</th>
+</tr>
+
+<tr><td>lr/pg0</td><td>0.00002</td><td>0.00002</td><td>0.00002</td></tr>
+<tr><td>lr/pg1</td><td>0.00002</td><td>0.00002</td><td>0.00002</td></tr>
+<tr><td>lr/pg2</td><td>0.00002</td><td>0.00002</td><td>0.00002</td></tr>
+
+<tr><td>metrics/mAP50-95B</td><td>0.48802</td><td>0.38716</td><td><b>0.61971</b></td></tr>
+<tr><td>metrics/mAP50B</td><td>0.64043</td><td>0.52062</td><td><b>0.76087</b></td></tr>
+<tr><td>metrics/precisionB</td><td>0.65281</td><td>0.59245</td><td>0.64294</td></tr>
+<tr><td>metrics/recallB</td><td>0.60489</td><td>0.50324</td><td><b>0.71211</b></td></tr>
+
+<tr><td>train/box_loss</td><td>1.20095</td><td>1.35058</td><td><b>1.08518</b></td></tr>
+<tr><td>train/cls_loss</td><td>1.30011</td><td>2.07919</td><td><b>1.78517</b></td></tr>
+<tr><td>train/dfl_loss</td><td>1.18710</td><td>1.28039</td><td><b>1.18243</b></td></tr>
+
+<tr><td>val/box_loss</td><td>0.95001</td><td>1.13281</td><td><b>0.72485</b></td></tr>
+<tr><td>val/cls_loss</td><td>0.78308</td><td>1.12302</td><td>0.86491</td></tr>
+<tr><td>val/dfl_loss</td><td>0.98932</td><td>1.07025</td><td><b>0.92875</b></td></tr>
+
+</table>
 
 ### ✔ Interpretation
 
