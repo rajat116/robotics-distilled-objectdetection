@@ -173,27 +173,19 @@ python scripts/generate_inference_images.py
 
 ### **Input Image**
 
-```
 ![input](figures/input_image.jpg)
-```
 
 ### **Teacher Detection**
 
-```
 ![teacher detection](figures/detection_teacher.jpg)
-```
 
 ### **Student Detection**
 
-```
 ![student detection](figures/detection_student.jpg)
-```
 
 ### **Distilled Student Detection**
 
-```
 ![student kd](figures/detection_student_kd.jpg)
-```
 
 ---
 
