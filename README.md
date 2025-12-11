@@ -235,33 +235,93 @@ Insert the table as:
 
 ## **Size Comparison**
 
-```
-| model       | size    | notes                   |
-|-------------|---------|-------------------------|
-| teacher     | 21.5 MB | YOLOv8s heavy model     |
-| student     | 6.2 MB  | YOLOv8n fast baseline   |
-| student_kd  | 6.2 MB  | Same size as student    |
-```
+<h3>Model Size Comparison</h3>
+
+<table>
+<tr>
+    <th>model</th>
+    <th>size (MB)</th>
+    <th>notes</th>
+</tr>
+<tr>
+    <td>teacher (YOLOv8s)</td>
+    <td>21.5 MB</td>
+    <td>High accuracy but heavy</td>
+</tr>
+<tr>
+    <td>student (YOLOv8n)</td>
+    <td>6.2 MB</td>
+    <td>Fast but less accurate</td>
+</tr>
+<tr>
+    <td>student_KD (YOLOv8n-KD)</td>
+    <td>6.2 MB</td>
+    <td><b>Small & fast with teacher-level accuracy</b></td>
+</tr>
+</table>
+
 
 ## **Average Latency**
 
-```
-| model       | avg latency | speedup vs teacher|
-|-------------|-------------|-------------------|
-| teacher     | 84 ms       | baseline          |
-| student     | 34 ms       | ~2.4× faster      |
-| student_kd  | 46 ms       | ~1.8× faster      |
-```
+<h3>Latency Benchmark (ms)</h3>
+
+<table>
+<tr>
+    <th>model</th>
+    <th>avg latency (ms)</th>
+    <th>p95 latency (ms)</th>
+    <th>speedup vs teacher</th>
+</tr>
+<tr>
+    <td>teacher</td>
+    <td>84</td>
+    <td>103</td>
+    <td>1× (baseline)</td>
+</tr>
+<tr>
+    <td>student</td>
+    <td>34</td>
+    <td>52</td>
+    <td><b>2.4× faster</b></td>
+</tr>
+<tr>
+    <td>student_KD</td>
+    <td>46</td>
+    <td>91</td>
+    <td><b>1.8× faster</b></td>
+</tr>
+</table>
+
 
 ## **p95 Worst-Case Latency**
 
-```
-| model       | p95 latency | interpretation              |
-|-------------|-------------|-----------------------------|
-| teacher     | 103 ms      | slow heavy model            |
-| student     | 52 ms       | stable & consistent         |
-| student_kd  | 91 ms       | slight KD overhead          |
-```
+<h3>p95 Latency Comparison</h3>
+
+<table>
+<tr>
+    <th>model</th>
+    <th>p95 latency</th>
+    <th>interpretation</th>
+</tr>
+
+<tr>
+    <td>teacher</td>
+    <td>103 ms</td>
+    <td>slow heavy model</td>
+</tr>
+
+<tr>
+    <td>student</td>
+    <td>52 ms</td>
+    <td>stable & consistent</td>
+</tr>
+
+<tr>
+    <td>student_KD</td>
+    <td>91 ms</td>
+    <td>slight KD overhead</td>
+</tr>
+</table>
 
 ---
 
