@@ -203,13 +203,13 @@ python scripts/generate_inference_images.py
 
 Insert the table as:
 
-```md
-| metric                  | teacher | student | student_KD |
+```
+| metric                 | teacher | student | student_KD |
 |------------------------|---------|---------|------------|
-| mAP50                  | 0.640   | 0.520   | **0.760** |
-| mAP50–95               | 0.488   | 0.387   | **0.619** |
+| mAP50                  | 0.640   | 0.520   | **0.760**  |
+| mAP50–95               | 0.488   | 0.387   | **0.619**  |
 | precision              | 0.653   | 0.592   | 0.643      |
-| recall                 | 0.605   | 0.503   | **0.712** |
+| recall                 | 0.605   | 0.503   | **0.712**  |
 ```
 
 ### ✔ Interpretation
@@ -225,9 +225,9 @@ Insert the table as:
 
 ## **Size Comparison**
 
-```md
-| model       | size | notes                     |
-|-------------|------|---------------------------|
+```
+| model       | size    | notes                   |
+|-------------|---------|-------------------------|
 | teacher     | 21.5 MB | YOLOv8s heavy model     |
 | student     | 6.2 MB  | YOLOv8n fast baseline   |
 | student_kd  | 6.2 MB  | Same size as student    |
@@ -235,8 +235,8 @@ Insert the table as:
 
 ## **Average Latency**
 
-```md
-| model       | avg latency | speedup vs teacher |
+```
+| model       | avg latency | speedup vs teacher|
 |-------------|-------------|-------------------|
 | teacher     | 84 ms       | baseline          |
 | student     | 34 ms       | ~2.4× faster      |
@@ -245,7 +245,7 @@ Insert the table as:
 
 ## **p95 Worst-Case Latency**
 
-```md
+```
 | model       | p95 latency | interpretation              |
 |-------------|-------------|-----------------------------|
 | teacher     | 103 ms      | slow heavy model            |
