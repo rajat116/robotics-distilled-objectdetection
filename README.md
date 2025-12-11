@@ -122,43 +122,111 @@ This is the same workflow used in professional robotics, autonomous driving, and
 
 ---
 
+Here is the **correct, complete, final README repo-structure section**, rewritten professionally, fully aligned with the *actual* tree you provided.
+
+Use this **exact block** in your README.
+Nothing missing, nothing extra — fully consistent with your repository.
+
+---
+
 # 📁 **4. Repository Structure**
+
+Your project follows a clean MLOps-style layout: modular code, Airflow orchestration, MLflow tracking, inference service, benchmarking, drift monitoring, and evaluation tools.
+
+Below is the **accurate repo structure** based on your latest `tree` output.
+
+---
+
+## **Source Code (`src/`)**
 
 ```
 src/
 │
-├── training/                 # Teacher, student, KD training scripts
-├── distillation/             # Generates KD supervision labels
-├── inference/                # FastAPI inference service
-├── monitoring/               # Drift detection + Prometheus metrics
-├── evaluation/               # Metrics comparison & benchmarking
-├── benchmarking/             # Latency/perf testing
-└── utils/                    # Config + logging helpers
-
-airflow_docker/
-│   ├── dags/                 # Retraining DAG + Drift DAG
-│   ├── Dockerfile.worker
-│   ├── docker-compose.yaml
-│   └── keys/                 # SSH keys for EC2
+├── training/                     # Teacher, student, and KD student training scripts
+│   ├── train_teacher.py
+│   ├── train_student.py
+│   └── train_student_kd.py
+│
+├── distillation/                 # Generate KD pseudo-labels from teacher predictions
+│   └── generate_kd_labels.py
+│
+├── inference/                    # FastAPI inference service + model loader
+│   ├── api.py
+│   └── model_loader.py
+│
+├── monitoring/                   # Drift detection + Prometheus instrumentation
+│   ├── drift_job.py
+│   └── metrics.py
+│
+├── evaluation/                   # MLflow metric comparison + bar-chart generation
+│   └── compare_kd_experiments.py
+│
+├── benchmarking/                 # Latency + throughput benchmarking scripts
+│   └── benchmark.py
+│
+└── utils/                        # Configuration + logging utilities
+    ├── config.py
+    └── logger.py
 ```
 
-Models:
+---
+
+## **Airflow Orchestration (`airflow_docker/`)**
+
+```
+airflow_docker/
+│
+├── dags/                          # Automated training + automated drift pipelines
+│   ├── drift_monitoring_pipeline.py
+│   └── yolo_retrain_dag.py
+│
+├── Dockerfile.worker              # Airflow worker image
+├── docker-compose.yaml            # Airflow deployment for Codespaces
+│
+├── config/
+│   └── airflow.cfg                # Airflow configuration
+│
+└── keys/
+    └── yolo-robotics.pem          # SSH key for EC2 remote execution
+```
+
+---
+
+## **Models**
 
 ```
 models/
-├── teacher/
-├── student/
-└── student_kd/
+├── teacher/                       # Trained YOLOv8s teacher weights
+├── student/                       # Baseline YOLOv8n student
+└── student_kd/                    # Distilled YOLOv8n KD student
 ```
 
-Figures (inference visuals + charts):
+---
+
+## **Figures (for README)**
 
 ```
 figures/
 ├── input_image.jpg
 ├── detection_teacher.jpg
 ├── detection_student.jpg
-└── detection_student_kd.jpg
+├── detection_student_kd.jpg
+└── yolo_kd_comparison.png        # mAP/precision/recall bar chart
+```
+
+---
+
+## **Other Important Files**
+
+```
+Dockerfile.inference              # FastAPI model-inference image
+requirements.txt                  # Full environment for training + Airflow
+requirements.inference.txt        # Lightweight inference-only env
+benchmark_results.csv             # Latency + model size CSV
+mlflow.db                         # MLflow backend store (local mode)
+scripts/
+│   └── generate_inference_images.py  # Script to generate inference outputs
+tests/                            # Unit tests (model loader, API, training)
 ```
 
 ---
@@ -193,7 +261,7 @@ python scripts/generate_inference_images.py
 
 ## ✔ Key Detection Metrics (from YOLO results.csv)
 
-Insert the table as:
+![matric_comparison](figures/yolo_kd_comparison.png)
 
 <table>
 <tr>
